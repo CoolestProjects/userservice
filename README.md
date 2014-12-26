@@ -1,4 +1,4 @@
-userservice
-===========
+This is your new Play application
+=================================
 
-Coolest Projects User Service
+This file will be packaged with your application, when using `activator dist`.

@@ -1,0 +1,9 @@
+apply plugin: 'distribution'
+
+distributions {
+    liquibase {
+        contents {
+            from { 'src/main/resources/liquibase' }
+        }
+    }
+}
