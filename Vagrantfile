@@ -14,16 +14,16 @@ Vagrant.configure("2") do |config|
   config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.4_chef-11.4.4.box"
   config.vm.box = "platform-centos"
   config.vm.network :forwarded_port, guest: 3306, host: 3306  # MySQL
-  config.vm.network :forwarded_port, guest: 9001, host: 9001  # Web app
+  config.vm.network :forwarded_port, guest: 9000, host: 10001  # Web app
 
   config.vm.provision :chef_solo do |chef|
 
     chef.log_level = :debug
     chef.json = {
       :mysql => {
-        :server_root_password => 'cpmysql12',
-        :server_debian_password => 'cpmysql12',
-        :server_repl_password => 'cpmysql12',
+        :server_root_password => 'cpmysql123',
+        :server_debian_password => 'cpmysql123',
+        :server_repl_password => 'cpmysql123',
         :allow_remote_root => true,
         :bind_address => '0.0.0.0'
       },
@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
              driver_class: 'com.mysql.jdbc.Driver',
              jdbc_url: 'jdbc:mysql://localhost:3306/userservice',
              username: 'root',
-             password: 'cpmysql12'
+             password: 'cpmysql123'
      }
     }
     chef.add_recipe "cp_baseconfiguration::default"
