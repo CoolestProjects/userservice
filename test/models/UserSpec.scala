@@ -1,6 +1,5 @@
 package models
 
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing.Validation
 import org.coolestprojects.support.UserFixture
 import org.scalatest.{FeatureSpec, GivenWhenThen}
 import play.data.validation.Validation
