@@ -2,6 +2,7 @@ apply plugin: 'distribution'
 
 distributions {
     liquibase {
+        baseName = 'cp-liquibase'
         contents {
             from { 'src/main/resources/liquibase' }
         }
