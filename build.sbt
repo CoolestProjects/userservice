@@ -12,10 +12,14 @@ libraryDependencies ++= Seq(
   cache,
   javaWs,
   "mysql" % "mysql-connector-java" % "5.1.18",
+  "net.logstash.logback" % "logstash-logback-encoder" % "2.7",
   "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
   "org.scalatestplus" % "play_2.11" % "1.2.0" % "test",
-  "org.mindrot" % "jbcrypt" % "0.3m"
+  "org.mindrot" % "jbcrypt" % "0.3m",
+  "com.github.mumoshu" %% "play2-memcached" % "0.4.0"
 )
+
+resolvers +=  "Spy Repository" at "http://files.couchbase.com/maven2"
 
 sbt.Keys.fork in Test := false
 
