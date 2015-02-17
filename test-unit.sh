@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sbt "testOnly models.*"
+activator "testOnly models.*"

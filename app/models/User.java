@@ -41,6 +41,11 @@ public class User extends Model {
     @Constraints.MinLength(5)
     private String password;
 
+    public String acceptTerms;
+    public String parentName;
+    public String parentEmail;
+    public String parentMobile;
+
     public String twitter;
     public String mobileNumber;
     public String profileImage;

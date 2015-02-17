@@ -11,6 +11,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import security.UserRoles;
+import services.UserService;
 import views.html.index;
 
 import javax.persistence.PersistenceException;
@@ -22,7 +23,9 @@ import java.io.IOException;
 public class UserController extends Controller {
 
     private static ObjectMapper mapper =  new ObjectMapper();
-
+    
+    private static UserService userService = new UserService();
+    
     public static Result index() {
         return ok(index.render("Userservice is running"));
     }
@@ -59,7 +62,20 @@ public class UserController extends Controller {
         return Promise.promise(() -> getUserFromEmail(email))
                 .map((Result result) -> result);
     }
+    
+    public static Promise<Result> lostPassword(final String email) {
+        return Promise.promise(() -> processLostPassword(email))
+                .map((Result result) -> result);
+    }
 
+    private static Result processLostPassword(final String email) {
+        final User user = UserDao.find.where().eq("email", email).findUnique();
+        final String password = userService.resetPassword();
+        user.setPassword(password);
+        JsonNode userResponse = Json.toJson(user);
+        return ok(userResponse);
+    }
+    
     private static Result getUserFromEmail(final String email) {
         final User user = UserDao.find.where().eq("email", email).findUnique();
         JsonNode userResponse = Json.toJson(user);

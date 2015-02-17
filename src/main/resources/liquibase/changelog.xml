@@ -8,5 +8,5 @@
 
     <include file="changelogs/1.sql" relativeToChangelogFile="true"/>
     <include file="changelogs/2.sql" relativeToChangelogFile="true"/>
-
+    <include file="changelogs/3.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
