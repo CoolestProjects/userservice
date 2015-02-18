@@ -16,6 +16,9 @@ import views.html.index;
 
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by noelking on 10/17/14.
@@ -68,6 +71,46 @@ public class UserController extends Controller {
                 .map((Result result) -> result);
     }
 
+    public static Promise<Result> authenticate() {
+        return Promise.promise(() -> processAuthRequest())
+                .map((Result result) -> result);
+    }
+
+    public static Promise<Result> updatePassword() {
+        return Promise.promise(() -> updateUserPassword())
+                .map((Result result) -> result);
+    }
+
+    private static Result updateUserPassword() throws IOException, ParseException {
+        final Map<String, String> requestDetails = parsePasswordRequest();
+        final User user = UserDao.find.where().eq("email", requestDetails.get("email")).findUnique();
+        user.setPassword(requestDetails.get("password"));
+        try {
+            Logger.info("Saving user data {} " + user);
+            user.save();
+            return returnUserRecord(user);
+        } catch (PersistenceException e){
+            Logger.info("Failed to save user data " + e.getMessage(), e);
+            return badRequest("Invalid user object");
+        }
+    }
+
+    private static Result processAuthRequest() throws IOException, ParseException {
+        final Map<String, String> requestDetails = parseAuthRequest();
+        final User user = UserDao.find.where().eq("email", requestDetails.get("email")).findUnique();
+        Logger.info("Verifying user " + user.email);
+        if(user != null && user.doPasswordsMatch(requestDetails.get("password"))) {
+            return returnUserRecord(user);
+        }
+        return badRequest("Invalid user credentials");
+    }
+    
+    private static Result returnUserRecord(final User user) {
+        user.setPassword("");
+        return ok(Json.toJson(user));
+    }
+    
+
     private static Result processLostPassword(final String email) {
         final User user = UserDao.find.where().eq("email", email).findUnique();
         final String password = userService.resetPassword();
@@ -107,4 +150,21 @@ public class UserController extends Controller {
         Logger.debug("Read user data: {} ", userDetails);
         return userDetails;
     }
+
+    private static Map<String, String> parsePasswordRequest() throws IOException, ParseException {
+        final JsonNode request = request().body().asJson();
+        final Map<String, String> requstDetails = new HashMap<String, String>();
+        requstDetails.put("email", request.get("email").asText());
+        requstDetails.put("password" , request.get("description").asText());
+        return requstDetails;
+    }
+
+    private static Map<String, String> parseAuthRequest() throws IOException, ParseException {
+        final JsonNode request = request().body().asJson();
+        final Map<String, String> requstDetails = new HashMap<String, String>();
+        requstDetails.put("email", request.get("email").asText());
+        requstDetails.put("password" , request.get("description").asText());
+        return requstDetails;
+    }
+
 }

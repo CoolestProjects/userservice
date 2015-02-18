@@ -18,10 +18,13 @@ All error http codes will return a json structure which will contain a list of e
 __conf/routes__
 ````
 # User service
+# User service
 GET     /user                       controllers.UserController.index()
 GET     /user/:username             controllers.UserController.get(username: String)
 POST    /user/create                controllers.UserController.createUser()
 POST    /user/update                controllers.UserController.update()
+POST    /user/updatepassword        controllers.UserController.updatePassword()
+
 POST    /user/lostpassword/:username           controllers.UserController.lostPassword(username: String)
 ````
 

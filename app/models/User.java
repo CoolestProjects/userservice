@@ -69,7 +69,17 @@ public class User extends Model {
     }
 
     public void setPassword(final String password) {
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = hashPasswordValue(password);
+    }
+    
+    public boolean doPasswordsMatch(final String enteredPassword) {
+        if(password.equals(hashPasswordValue(enteredPassword)))
+            return true;
+        return false;
+    }
+    
+    private String hashPasswordValue(final String password) {
+       return  BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     public String getPassword() {
