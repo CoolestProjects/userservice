@@ -7,7 +7,7 @@ GET     /                           controllers.Application.index()
 
 # User service
 GET     /user                       controllers.UserController.index()
-GET     /user/:username             controllers.UserController.get(username: String)
+GET     /user/:email                controllers.UserController.get(email: String)
 POST    /user/create                controllers.UserController.createUser()
 POST    /user/update                controllers.UserController.update()
 POST    /user/updatepassword        controllers.UserController.updatePassword()

@@ -33,9 +33,9 @@ Vagrant.configure("2") do |config|
       cp_liquibase: {
              classpath_path: "/liquibase",
              driver_file_name: "connector-java-5.1.18.jar",
-             zip_foldername: "userservice-liquibase",
+             zip_foldername: "cp-liquibase",
              dist_dir: "/opt/liquibase",
-             dist_local_file_path: "/vagrant_build/distributions/userservice-liquibase.zip",
+             dist_local_file_path: "/vagrant_build/distributions/cp-liquibase.zip",
              use_local_dist: "true"
      },
      database:  {

@@ -24,6 +24,21 @@ object UserFixture {
     return user
   }
 
+  def createUser(password : String) : models.User = {
+    val user = new models.User
+
+    user.email = createRandomEmail
+    user.dateOfBirth = createRandomDateOfBirth
+    user.firstname = "Noel"
+    user.lastname = "King"
+    user.mobileNumber = "+353800000000"
+    user.coderdojoId = 1l
+    user.setPassword(password);
+
+    return user
+  }
+
+
   def createRandomEmail : String = {
     return Random.alphanumeric.take(15).mkString + "@coolestprojects.org"
   }

@@ -69,6 +69,30 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
     updateResponse.status mustBe (CREATED)
   }
 
+  "verify authenticated user" in {
+    val password = "password122344";
+    val user = createUser(password)
+    val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.newObject.put("email", user.email).put("password", password)))
+    val userSaveUrl  = s"$testPaymentGatewayURL/user/authenticate"
+    val response = await(WS.url(userSaveUrl).post(userJson))
+    response.status mustBe (CREATED)
+  }
+  
+  def createUser(password : String) :  models.User = {
+    val user = UserFixture.createUser(password)
+    val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(user)))
+    val userSaveUrl  = s"$testPaymentGatewayURL/user/create"
+    Logger.info("verify save user obj: {} ", userJson);
+
+    val response = await(WS.url(userSaveUrl).post(userJson))
+    Logger.info("verify save user response {} ", response)
+
+    response.status mustBe (CREATED);
+    
+    return user
+  }
+
+
   def createNewUserObject : models.User = {
     val user = new models.User
     user.email = UserFixture.createRandomEmail

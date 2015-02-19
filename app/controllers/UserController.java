@@ -11,6 +11,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import security.UserRoles;
+import services.EmailService;
 import services.UserService;
 import views.html.index;
 
@@ -34,12 +35,16 @@ public class UserController extends Controller {
     }
 
     public static Promise<Result> createUser() throws IOException {
-        return Promise.promise(() -> saveUser())
+        return Promise.promise(() -> saveUserRequest())
                 .map((Result result) -> result);
     }
 
-    private static Result saveUser() throws IOException {
+    private static Result saveUserRequest() throws IOException {
         final models.User user = parseRequest();
+        return saveUser(user);
+    }
+    
+    private static Result saveUser(final models.User user) {
         try {
             Logger.info("Saving user data {} " + user);
             user.save();
@@ -50,10 +55,11 @@ public class UserController extends Controller {
         }
     }
 
-    private static Result updateUserRole(UserRoles userRole, User user) {
+    private static Result updateUserRole(UserRoles userRole, models.User user) {
         try {
-            final Role role = new Role(user.id, userRole.getRoleName());
-            role.save();
+            final Role role = new Role(userRole.getRoleName());
+            user.roles.add(role);
+            user.save();
             return created();
         } catch (PersistenceException ex) {
             Logger.info("Failed to save user role " + ex.getMessage(), ex);
@@ -113,10 +119,15 @@ public class UserController extends Controller {
 
     private static Result processLostPassword(final String email) {
         final User user = UserDao.find.where().eq("email", email).findUnique();
-        final String password = userService.resetPassword();
-        user.setPassword(password);
-        JsonNode userResponse = Json.toJson(user);
-        return ok(userResponse);
+        if(user != null) {
+            final String password = userService.resetPassword();
+            user.setPassword(password);
+            final EmailService emailService = new EmailService();
+            emailService.sendLostPasswordEmail(email, user.firstname, password);
+            return saveUser(user);
+        } else {
+            return badRequest("Invalid request");
+        }
     }
     
     private static Result getUserFromEmail(final String email) {
@@ -163,7 +174,7 @@ public class UserController extends Controller {
         final JsonNode request = request().body().asJson();
         final Map<String, String> requstDetails = new HashMap<String, String>();
         requstDetails.put("email", request.get("email").asText());
-        requstDetails.put("password" , request.get("description").asText());
+        requstDetails.put("password" , request.get("password").asText());
         return requstDetails;
     }
 

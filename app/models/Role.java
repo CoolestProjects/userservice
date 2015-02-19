@@ -13,15 +13,13 @@ public class Role extends Model {
     @Id
     public Long id;
 
-    public Long userId;
     public String name;
 
     @ManyToOne
     private User user;
 
-    public Role(final Long userId,
+    public Role(
     	final String name) {
-    	this.userId = userId;
     	this.name = name;
     }
 
@@ -29,9 +27,6 @@ public class Role extends Model {
     	return name;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
     public User getUser() {
         return user;
