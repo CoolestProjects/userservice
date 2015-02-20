@@ -30,7 +30,7 @@ object UserFixture {
     user.email = createRandomEmail
     user.dateOfBirth = createRandomDateOfBirth
     user.firstname = "Noel"
-    user.lastname = "King"
+    user.lastname = "Keanen"
     user.mobileNumber = "+353800000000"
     user.coderdojoId = 1l
     user.setPassword(password);
@@ -49,7 +49,7 @@ object UserFixture {
     val monthRan = new Random()
     val monthRange = 0 to 11
     val yearRan = new Random()
-    val yearRange = 1990 to 2010
+    val yearRange = 0 to 40
 
     val dateOfBirth = new Date()
     dateOfBirth.setDate(dateRange(dateRan.nextInt(dateRange length)))

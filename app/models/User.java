@@ -9,6 +9,8 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 /**
  * Created by noelking on 10/17/14.
  */
@@ -49,8 +51,11 @@ public class User extends Model {
     public String twitter;
     public String mobileNumber;
     public String profileImage;
+    
+    public String salt;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference
     public Set<Role> roles;
 
     public User() {}
@@ -69,7 +74,7 @@ public class User extends Model {
     }
 
     public void setPassword(final String password) {
-        this.password = hashPasswordValue(password);
+        this.password = password; 
     }
     
     public boolean doPasswordsMatch(final String enteredPassword) {
@@ -78,8 +83,14 @@ public class User extends Model {
         return false;
     }
     
+    public void setHashPassword(final String password) {
+        setPassword(hashPasswordValue(password));
+    }
+    
     private String hashPasswordValue(final String password) {
-       return  BCrypt.hashpw(password, BCrypt.gensalt());
+       if(salt == null)
+           salt =  BCrypt.gensalt();
+       return  BCrypt.hashpw(password,salt);
     }
 
     public String getPassword() {

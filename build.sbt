@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "org.scalatestplus" % "play_2.11" % "1.2.0" % "test",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "com.github.mumoshu" %% "play2-memcached" % "0.6.0",
-  "org.antlr" % "stringtemplate" % "4.0.2"
+  "org.antlr" % "stringtemplate" % "4.0.2",
+  "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13"
 )
 
 resolvers += "Spy Repository" at "http://files.couchbase.com/maven2" // required to resolve `spymemcached`, the plugin's dependency.

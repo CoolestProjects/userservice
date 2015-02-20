@@ -41,6 +41,7 @@ public class UserController extends Controller {
 
     private static Result saveUserRequest() throws IOException {
         final models.User user = parseRequest();
+        user.setHashPassword(user.getPassword());
         return saveUser(user);
     }
     
@@ -58,9 +59,9 @@ public class UserController extends Controller {
     private static Result updateUserRole(UserRoles userRole, models.User user) {
         try {
             final Role role = new Role(userRole.getRoleName());
-            user.roles.add(role);
-            user.save();
-            return created();
+            role.user = user;
+            role.save();
+            return created(Json.toJson(user));
         } catch (PersistenceException ex) {
             Logger.info("Failed to save user role " + ex.getMessage(), ex);
             return internalServerError("Error creating user record ");
@@ -113,6 +114,7 @@ public class UserController extends Controller {
     
     private static Result returnUserRecord(final User user) {
         user.setPassword("");
+        user.salt = "";
         return ok(Json.toJson(user));
     }
     
@@ -143,14 +145,28 @@ public class UserController extends Controller {
 
     private static Result updateUser() throws IOException {
         final models.User user = parseRequest();
+        final User updatedUser = getUpdateUser(user);
         try {
             Logger.info("Saving user data {} " + user);
-            user.update();
+            updatedUser.update();
             return created();
         } catch (PersistenceException e){
             Logger.info("Failed to save user data " + e.getMessage(), e);
             return badRequest("Invalid user object");
         }
+    }
+    
+    private static User getUpdateUser(final User inputUser) {
+        final User user = UserDao.find.where().eq("email", inputUser.email).findUnique();
+        user.dateOfBirth = inputUser.dateOfBirth;
+        user.firstname = inputUser.firstname;
+        user.lastname = inputUser.lastname;
+        user.mobileNumber = inputUser.mobileNumber;
+        user.parentEmail = inputUser.parentEmail;
+        user.parentMobile = inputUser.parentMobile;
+        user.parentName = inputUser.parentName;
+        user.twitter = inputUser.twitter;
+        return user;
     }
 
     private static models.User parseRequest() throws IOException {
@@ -166,7 +182,7 @@ public class UserController extends Controller {
         final JsonNode request = request().body().asJson();
         final Map<String, String> requstDetails = new HashMap<String, String>();
         requstDetails.put("email", request.get("email").asText());
-        requstDetails.put("password" , request.get("description").asText());
+        requstDetails.put("password" , request.get("password").asText());
         return requstDetails;
     }
 

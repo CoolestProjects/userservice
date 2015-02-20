@@ -1,3 +1,3 @@
 #!/bin/sh
 
-activator "testOnly org.coolestprojects.acceptance.*"
+activator -jvm-debug 9999 "testOnly org.coolestprojects.acceptance.*"
