@@ -16,9 +16,9 @@ public class Role extends Model {
 
     public String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
-    public User user;
+    public Long userId;
+    
+    public Role() {}
 
     public Role(
     	final String name) {
@@ -28,5 +28,6 @@ public class Role extends Model {
     public String getName() {
     	return name;
     }
+
 
 }

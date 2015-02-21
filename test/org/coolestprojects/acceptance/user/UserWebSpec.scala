@@ -14,7 +14,7 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
   val testPaymentGatewayURL = s"http://$myPublicAddress"
   var user: models.User = new models.User
   var mapper: ObjectMapper = new ObjectMapper
-/*
+
   "verify server started logic" in {
     val callbackURL = s"http://$myPublicAddress/user"
     val response = await(WS.url(testPaymentGatewayURL).withQueryString("callbackURL" -> callbackURL).get())
@@ -69,7 +69,7 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
 
     updateResponse.status mustBe (CREATED)
   }
-*/
+
   "verify authenticated user" in {
     val password = "password122344";
     val user = createUserRemote(password);
@@ -77,6 +77,7 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
     val userAuthJson = play.api.libs.json.Json.parse(Json.stringify(Json.newObject.put("email", user.email).put("password", password)))
     val userAuthUrl  = s"$testPaymentGatewayURL/user/authenticate"
     val response = await(WS.url(userAuthUrl).post(userAuthJson))
+    Logger.info(response.body.toString())
     response.status mustBe (OK)
   }
   

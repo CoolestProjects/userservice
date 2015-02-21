@@ -1,21 +1,25 @@
 package models;
 
+import dao.RoleDao;
+import dao.UserDao;
+import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mindrot.jbcrypt.BCrypt;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
+import java.beans.Transient;
 import java.util.Date;
-import java.util.Set;
-
-import org.codehaus.jackson.annotate.JsonManagedReference;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 /**
  * Created by noelking on 10/17/14.
  */
 @Entity
-public class User extends Model {
+public class User extends Model  implements java.io.Serializable {
 
     @Id
     public Long id;
@@ -53,10 +57,8 @@ public class User extends Model {
     public String profileImage;
     
     public String salt;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JsonManagedReference
-    public Set<Role> roles;
+    
+    public List<Role> roles;
 
     public User() {}
 
@@ -95,5 +97,9 @@ public class User extends Model {
 
     public String getPassword() {
         return password;
+    }
+
+    public List<Role> getRoles() {
+       return RoleDao.find.where().eq("user_id", id).findList();
     }
 }

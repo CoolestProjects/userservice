@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Created by noelking on 10/17/14.
@@ -59,7 +60,7 @@ public class UserController extends Controller {
     private static Result updateUserRole(UserRoles userRole, models.User user) {
         try {
             final Role role = new Role(userRole.getRoleName());
-            role.user = user;
+            role.userId = user.id;
             role.save();
             return created(Json.toJson(user));
         } catch (PersistenceException ex) {
