@@ -80,6 +80,17 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
     Logger.info(response.body.toString())
     response.status mustBe (OK)
   }
+
+  "verify lost password" in {
+    var email = "coolestprojects@coderdojo.com";
+    val password = "password122344";
+    //val user = createUserRemote(password, email);
+
+    val userEmailUrl  = s"$testPaymentGatewayURL/user/lostpassword/"+email;
+    val response = await(WS.url(userEmailUrl).post(""))
+    Logger.info(response.body.toString())
+    response.status mustBe (OK)
+  }
   
   def createUserRemote(password : String) :  models.User = {
     val user = UserFixture.createUser(password)
@@ -92,6 +103,21 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
 
     response.status mustBe (CREATED);
     
+    return user
+  }
+
+  def createUserRemote(password : String, email : String) :  models.User = {
+    val user = UserFixture.createUser(password)
+    user.email = email
+    val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(user)))
+    val userSaveUrl  = s"$testPaymentGatewayURL/user/create"
+    Logger.info("verify save user obj: {} ", userJson);
+
+    val response = await(WS.url(userSaveUrl).post(userJson))
+    Logger.info("verify save user response {} ", response)
+
+    response.status mustBe (CREATED);
+
     return user
   }
 

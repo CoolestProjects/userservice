@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 
 /**
  * Created by noelking on 10/17/14.
@@ -124,9 +123,9 @@ public class UserController extends Controller {
         final User user = UserDao.find.where().eq("email", email).findUnique();
         if(user != null) {
             final String password = userService.resetPassword();
-            user.setPassword(password);
+            user.setHashPassword(password);
             final EmailService emailService = new EmailService();
-            emailService.sendLostPasswordEmail(email, user.firstname, password);
+            emailService.sendLostPasswordEmail(new String[] {email}, user.firstname, password);
             return saveUser(user);
         } else {
             return badRequest("Invalid request");
