@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET     /verify                     controllers.Application.verify()
 
 # User service
 GET     /user                       controllers.UserController.index()
