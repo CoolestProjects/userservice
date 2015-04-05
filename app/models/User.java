@@ -1,20 +1,15 @@
 package models;
 
 import dao.RoleDao;
-import dao.UserDao;
-import org.codehaus.jackson.annotate.JsonManagedReference;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mindrot.jbcrypt.BCrypt;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
-import javax.persistence.*;
-import java.beans.Transient;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 /**
  * Created by noelking on 10/17/14.
  */
@@ -38,7 +33,7 @@ public class User extends Model  implements java.io.Serializable {
     public String lastname;
 
     @Constraints.Required
-    public Long coderdojoId;
+    public Integer coderdojoId;
 
     @Constraints.Required
     @Formats.DateTime(pattern="dd/MM/yyyy")
@@ -57,13 +52,15 @@ public class User extends Model  implements java.io.Serializable {
     public String profileImage;
     
     public String salt;
+
+    public String gender;
     
     public List<Role> roles;
 
     public User() {}
 
     public User(final String email, final String firstname, final String lastname,
-                final Long coderdojoId,final Date dateOfBirth,
+                final Integer coderdojoId,final Date dateOfBirth,
                 final String twitter, final String mobileNumber, final String profileImage) {
         this.email = email;
         this.firstname = firstname;

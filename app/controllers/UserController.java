@@ -17,7 +17,10 @@ import views.html.index;
 
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,17 +32,19 @@ public class UserController extends Controller {
     private static ObjectMapper mapper =  new ObjectMapper();
     
     private static UserService userService = new UserService();
-    
+
+    private static DateFormat dateFormat = new SimpleDateFormat("DD-MM-YYYY");
+
     public static Result index() {
         return ok(index.render("Userservice is running"));
     }
 
-    public static Promise<Result> createUser() throws IOException {
+    public static Promise<Result> createUser() throws IOException, ParseException {
         return Promise.promise(() -> saveUserRequest())
                 .map((Result result) -> result);
     }
 
-    private static Result saveUserRequest() throws IOException {
+    private static Result saveUserRequest() throws IOException, ParseException {
         final models.User user = parseRequest();
         user.setHashPassword(user.getPassword());
         return saveUser(user);
@@ -143,7 +148,7 @@ public class UserController extends Controller {
                 .map((Result result) -> result);
     }
 
-    private static Result updateUser() throws IOException {
+    private static Result updateUser() throws IOException, ParseException {
         final models.User user = parseRequest();
         final User updatedUser = getUpdateUser(user);
         try {
@@ -169,12 +174,27 @@ public class UserController extends Controller {
         return user;
     }
 
-    private static models.User parseRequest() throws IOException {
+    private static models.User parseRequest() throws IOException, ParseException {
         Logger.info("Received request body " + request().body().asText());
         final JsonNode request = request().body().asJson();
         Logger.info("Json object received " + request().body().asJson() + " = " + mapper.toString());
-        final models.User userDetails = mapper.readValue(request.toString(),models.User.class);
-        Logger.debug("Read user data: {} ", userDetails);
+        final User userDetails = new User();
+        userDetails.email = request.get("email").asText();
+        userDetails.setHashPassword(request.get("password").asText());
+        userDetails.firstname = request.get("firstname") != null ? request.get("firstname").asText() : "";
+        userDetails.lastname = request.get("lastname") != null ? request.get("lastname").asText() : "";
+        userDetails.acceptTerms = request.get("acceptTerms") != null ? request.get("acceptTerms").asText() : "";
+        userDetails.coderdojoId = request.get("coderdojoId") != null ? request.get("coderdojoId").asInt() : 0;
+        Logger.info("---------- DATE OF BIRTH " +request.get("dateOfBirth").asText());
+        userDetails.dateOfBirth = request.get("dateOfBirth") != null ? new Date(request.get("dateOfBirth").asLong()) : null;
+        Logger.info("---------- DATE OF BIRTH - " +new Date(request.get("dateOfBirth").asLong()));
+        userDetails.gender = request.get("gender") != null ? request.get("gender").asText() : "";
+        userDetails.id = request.get("id") != null ? request.get("id").asLong() : 0l;
+        userDetails.mobileNumber = request.get("mobileNumber") != null ? request.get("mobileNumber").asText() : "";
+        userDetails.parentEmail = request.get("parentEmail") != null ? request.get("parentEmail").asText() : "";
+        userDetails.parentMobile = request.get("parentMobile") != null ? request.get("parentMobile").asText() : "";
+        userDetails.parentName = request.get("parentNamee") != null ? request.get("parentName").asText() : "";
+        userDetails.twitter = request.get("twitter") != null ? request.get("twitter").asText() : "";
         return userDetails;
     }
 

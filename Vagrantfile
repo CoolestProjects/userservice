@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.4_chef-11.4.4.box"
   config.vm.box = "platform-centos"
-  config.vm.network :forwarded_port, guest: 3306, host: 3306  # MySQL
+  config.vm.network :forwarded_port, guest: 3306, host: 3307 # MySQL
   config.vm.network :forwarded_port, guest: 9000, host: 10001  # Web app
 
   config.vm.provision :chef_solo do |chef|

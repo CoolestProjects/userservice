@@ -128,7 +128,7 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
     user.dateOfBirth = UserFixture.createRandomDateOfBirth
     user.firstname = "Ted"
     user.lastname = "Smith"
-    user.coderdojoId = 50l
+    user.coderdojoId = 50
     user.mobileNumber = "+999"
     user.twitter = "coolestprojects"
     return user;

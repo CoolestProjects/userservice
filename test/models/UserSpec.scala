@@ -101,7 +101,7 @@ class UserSpec  extends FeatureSpec with GivenWhenThen {
         val user = UserFixture.createUser
       When("A user enters a coderdojo ")
         user.id = 1l
-        user.coderdojoId = 100l
+        user.coderdojoId = 100
       Then("A validator is ran for the coderdojo and no errors returned")
         val validationErrors = Validation.getValidator().validate(user);
         assert(validationErrors.size() === 0)
