@@ -57,7 +57,7 @@ public class UserController extends Controller {
             return updateUserRole(UserRoles.USER, user);
         } catch (PersistenceException e){
             Logger.info("Failed to save user data " + e.getMessage(), e);
-            return badRequest("Invalid user object");
+            return badRequest("User did not save " + e.getMessage());
         }
     }
 
@@ -193,7 +193,7 @@ public class UserController extends Controller {
         userDetails.mobileNumber = request.get("mobileNumber") != null ? request.get("mobileNumber").asText() : "";
         userDetails.parentEmail = request.get("parentEmail") != null ? request.get("parentEmail").asText() : "";
         userDetails.parentMobile = request.get("parentMobile") != null ? request.get("parentMobile").asText() : "";
-        userDetails.parentName = request.get("parentNamee") != null ? request.get("parentName").asText() : "";
+        userDetails.parentName = request.get("parentName") != null ? request.get("parentName").asText() : "";
         userDetails.twitter = request.get("twitter") != null ? request.get("twitter").asText() : "";
         return userDetails;
     }
