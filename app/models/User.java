@@ -46,7 +46,8 @@ public class User extends Model  implements java.io.Serializable {
     public String parentName;
     public String parentEmail;
     public String parentMobile;
-
+    public String mailingList;
+    
     public String twitter;
     public String mobileNumber;
     public String profileImage;
@@ -98,5 +99,13 @@ public class User extends Model  implements java.io.Serializable {
 
     public List<Role> getRoles() {
        return RoleDao.find.where().eq("user_id", id).findList();
+    }
+
+    public String getMailingList() {
+        return mailingList;
+    }
+
+    public void setMailingList(String mailingList) {
+        this.mailingList = mailingList;
     }
 }

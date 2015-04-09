@@ -195,6 +195,7 @@ public class UserController extends Controller {
         userDetails.parentMobile = request.get("parentMobile") != null ? request.get("parentMobile").asText() : "";
         userDetails.parentName = request.get("parentName") != null ? request.get("parentName").asText() : "";
         userDetails.twitter = request.get("twitter") != null ? request.get("twitter").asText() : "";
+        userDetails.mailingList = request.get("mailingList") != null ? request.get("mailingList").asText() : "";
         return userDetails;
     }
 
