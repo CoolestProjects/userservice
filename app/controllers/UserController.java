@@ -46,6 +46,10 @@ public class UserController extends Controller {
 
     private static Result saveUserRequest() throws IOException, ParseException {
         final models.User user = parseRequest();
+        final User existsUser = getUser(user.email);
+        if(existsUser != null && existsUser.id != 0) {
+           return created(Json.toJson(existsUser));
+        }
         user.setHashPassword(user.getPassword());
         return saveUser(user);
     }
@@ -138,9 +142,13 @@ public class UserController extends Controller {
     }
     
     private static Result getUserFromEmail(final String email) {
-        final User user = UserDao.find.where().eq("email", email).findUnique();
+        final User user = getUser(email);
         JsonNode userResponse = Json.toJson(user);
         return ok(userResponse);
+    }
+    
+    private static User getUser(final String email) {
+        return UserDao.find.where().eq("email", email).findUnique();
     }
 
     public static Promise<Result> update() throws IOException {
