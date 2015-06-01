@@ -44,6 +44,21 @@ public class UserController extends Controller {
                 .map((Result result) -> result);
     }
 
+    public static Promise<Result> updateUserParentDetails(Integer userId) throws IOException, ParseException {
+        return Promise.promise(() -> saveParentDetails(userId))
+                .map((Result result) -> result);
+    }
+
+    private static Result saveParentDetails(Integer userId) throws IOException, ParseException {
+        final User newDetails = parseRequest();
+        final models.User user = UserDao.find.where().eq("id", userId).findUnique();
+        user.parentEmail = newDetails.parentEmail;
+        user.parentName = newDetails.parentName;
+        user.parentMobile = newDetails.parentMobile;
+        user.update();
+        return created(Json.toJson(user));
+    }
+
     private static Result saveUserRequest() throws IOException, ParseException {
         final models.User user = parseRequest();
         final User existsUser = getUser(user.email);
@@ -79,6 +94,11 @@ public class UserController extends Controller {
 
     public static Promise<Result> get(final String email) {
         return Promise.promise(() -> getUserFromEmail(email))
+                .map((Result result) -> result);
+    }
+
+    public static Promise<Result> getById(final Integer id) {
+        return Promise.promise(() -> getUserFromId(id))
                 .map((Result result) -> result);
     }
     
@@ -146,7 +166,14 @@ public class UserController extends Controller {
         JsonNode userResponse = Json.toJson(user);
         return ok(userResponse);
     }
-    
+
+    private static Result getUserFromId(final Integer id) {
+        final User user = UserDao.find.where().eq("id", id).findUnique();
+        JsonNode userResponse = Json.toJson(user);
+        return ok(userResponse);
+    }
+
+
     private static User getUser(final String email) {
         return UserDao.find.where().eq("email", email).findUnique();
     }

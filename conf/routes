@@ -8,9 +8,11 @@ GET     /verify                     controllers.Application.verify()
 
 # User service
 GET     /user                       controllers.UserController.index()
+GET     /user/byid/:id              controllers.UserController.getById(id: Integer)
 GET     /user/:email                controllers.UserController.get(email: String)
 POST    /user/create                controllers.UserController.createUser()
 POST    /user/update                controllers.UserController.update()
+POST    /user/parentdetails/:userId    controllers.UserController.updateUserParentDetails(userId : Integer)
 POST    /user/updatepassword        controllers.UserController.updatePassword()
 POST    /user/authenticate          controllers.UserController.authenticate()
 
