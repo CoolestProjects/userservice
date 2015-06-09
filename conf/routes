@@ -8,6 +8,7 @@ GET     /verify                     controllers.Application.verify()
 
 # User service
 GET     /user                       controllers.UserController.index()
+GET     /user/all                   controllers.UserController.getAll()
 GET     /user/byid/:id              controllers.UserController.getById(id: Integer)
 GET     /user/:email                controllers.UserController.get(email: String)
 POST    /user/create                controllers.UserController.createUser()

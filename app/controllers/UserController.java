@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,6 +91,11 @@ public class UserController extends Controller {
             Logger.info("Failed to save user role " + ex.getMessage(), ex);
             return internalServerError("Error creating user record ");
         }
+    }
+
+    public static Promise<Result> getAll() {
+        return Promise.promise(() -> getUserAll())
+                .map((Result result) -> result);
     }
 
     public static Promise<Result> get(final String email) {
@@ -163,6 +169,12 @@ public class UserController extends Controller {
     
     private static Result getUserFromEmail(final String email) {
         final User user = getUser(email);
+        JsonNode userResponse = Json.toJson(user);
+        return ok(userResponse);
+    }
+
+    private static Result getUserAll() {
+        final List<User> user = UserDao.find.all();
         JsonNode userResponse = Json.toJson(user);
         return ok(userResponse);
     }
