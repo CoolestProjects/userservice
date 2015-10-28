@@ -8,8 +8,10 @@ import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
+
 /**
  * Created by noelking on 10/17/14.
  */
@@ -51,8 +53,8 @@ public class User extends Model  implements java.io.Serializable {
     public String twitter;
     public String mobileNumber;
     public String profileImage;
-    
-    public String salt;
+
+    public boolean active;
 
     public String gender;
     
@@ -78,19 +80,17 @@ public class User extends Model  implements java.io.Serializable {
     }
     
     public boolean doPasswordsMatch(final String enteredPassword) {
-        if(password.equals(hashPasswordValue(enteredPassword)))
-            return true;
-        return false;
+        return BCrypt.checkpw(enteredPassword, password);
     }
     
     public void setHashPassword(final String password) {
         setPassword(hashPasswordValue(password));
     }
     
-    private String hashPasswordValue(final String password) {
-       if(salt == null)
-           salt =  BCrypt.gensalt();
-       return  BCrypt.hashpw(password,salt);
+    private String hashPasswordValue(final String newPassword) {
+        final String salt = BCrypt.gensalt(12);
+        final String passwordHashed = BCrypt.hashpw(newPassword, salt);
+        return passwordHashed;
     }
 
     public String getPassword() {

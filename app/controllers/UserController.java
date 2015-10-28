@@ -66,7 +66,7 @@ public class UserController extends Controller {
         if(existsUser != null && existsUser.id != 0) {
            return created(Json.toJson(existsUser));
         }
-        user.setHashPassword(user.getPassword());
+        user.active = true;
         return saveUser(user);
     }
     
@@ -141,7 +141,8 @@ public class UserController extends Controller {
         final Map<String, String> requestDetails = parseAuthRequest();
         final User user = UserDao.find.where().eq("email", requestDetails.get("email")).findUnique();
         Logger.info("Verifying user " + user.email);
-        if(user != null && user.doPasswordsMatch(requestDetails.get("password"))) {
+        if(user != null && user.doPasswordsMatch(requestDetails.get("password"))
+                && user.active) {
             return returnUserRecord(user);
         }
         return badRequest("Invalid user credentials");
@@ -149,7 +150,6 @@ public class UserController extends Controller {
     
     private static Result returnUserRecord(final User user) {
         user.setPassword("");
-        user.salt = "";
         return ok(Json.toJson(user));
     }
     
@@ -232,9 +232,7 @@ public class UserController extends Controller {
         userDetails.lastname = request.get("lastname") != null ? request.get("lastname").asText() : "";
         userDetails.acceptTerms = request.get("acceptTerms") != null ? request.get("acceptTerms").asText() : "";
         userDetails.coderdojoId = request.get("coderdojoId") != null ? request.get("coderdojoId").asInt() : 0;
-        Logger.info("---------- DATE OF BIRTH " +request.get("dateOfBirth").asText());
         userDetails.dateOfBirth = request.get("dateOfBirth") != null ? new Date(request.get("dateOfBirth").asLong()) : null;
-        Logger.info("---------- DATE OF BIRTH - " +new Date(request.get("dateOfBirth").asLong()));
         userDetails.gender = request.get("gender") != null ? request.get("gender").asText() : "";
         userDetails.id = request.get("id") != null ? request.get("id").asLong() : 0l;
         userDetails.mobileNumber = request.get("mobileNumber") != null ? request.get("mobileNumber").asText() : "";

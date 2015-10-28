@@ -15,63 +15,66 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
   var user: models.User = new models.User
   var mapper: ObjectMapper = new ObjectMapper
 
-  "verify server started logic" in {
-    val callbackURL = s"http://$myPublicAddress/user"
-    val response = await(WS.url(testPaymentGatewayURL).withQueryString("callbackURL" -> callbackURL).get())
-    response.status mustBe (OK)
-  }
+  val password = "password122344";
 
-  "verify save user" in {
-      user = UserFixture.createUser
-      val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(user)))
+    "verify server started logic" in {
+      val callbackURL = s"http://$myPublicAddress/user"
+      val response = await(WS.url(testPaymentGatewayURL).withQueryString("callbackURL" -> callbackURL).get())
+      response.status mustBe (OK)
+    }
+
+    "verify save user" in {
+        Logger.info(">>>>>>>>>>>>>>>> Testing Save User Request ")
+
+        user = UserFixture.createUser
+        val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(user)))
+        val userSaveUrl  = s"$testPaymentGatewayURL/user/create"
+        Logger.info("verify save user obj: {} ", userJson);
+
+        val response = await(WS.url(userSaveUrl).post(userJson))
+        Logger.info("verify save user response {} ", response)
+
+        response.status mustBe (CREATED)
+    }
+
+    "verify retrieving user" in {
+      val userGetUrl  = s"$testPaymentGatewayURL/user/" + user.email
+      Logger.info("requesting user url : {} ", userGetUrl)
+
+      val response = await(WS.url(userGetUrl).get())
+      Logger.info("verify retrieved user response {} ", response.body.toString())
+
+      val userJson = Json.parse(response.body.toString())
+      val emailAddr = userJson.findValue("email")
+      Logger.info("returned email address {} ", emailAddr)
+
+      response.status mustBe (OK)
+      (emailAddr).textValue() mustBe (String.valueOf(user.email))
+    }
+
+
+    "verify updating user" in {
+
+      val newUser = createNewUserObject
+      val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(newUser)))
       val userSaveUrl  = s"$testPaymentGatewayURL/user/create"
       Logger.info("verify save user obj: {} ", userJson);
+      val createResponse = await(WS.url(userSaveUrl).post(userJson))
 
-      val response = await(WS.url(userSaveUrl).post(userJson))
-      Logger.info("verify save user response {} ", response)
+      val userDetails: models.User = mapper.readValue(createResponse.body.toString(), classOf[models.User])
+      userDetails.firstname = "James"
+      userDetails.lastname = "Brown"
+      val updateUserJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(userDetails)))
+      val userUpdateUrl  = s"$testPaymentGatewayURL/user/update"
 
-      response.status mustBe (CREATED)
-  }
+      Logger.info("verify save user obj: {} ", updateUserJson);
+      val updateResponse = await(WS.url(userUpdateUrl).post(updateUserJson))
+      Logger.info("verify save user response {} ", updateResponse)
 
-  "verify retrieving user" in {
-    val userGetUrl  = s"$testPaymentGatewayURL/user/" + user.email
-    Logger.info("requesting user url : {} ", userGetUrl)
-
-    val response = await(WS.url(userGetUrl).get())
-    Logger.info("verify retrieved user response {} ", response.body.toString())
-
-    val userJson = Json.parse(response.body.toString())
-    val emailAddr = userJson.findValue("email")
-    Logger.info("returned email address {} ", emailAddr)
-
-    response.status mustBe (OK)
-    (emailAddr).textValue() mustBe (String.valueOf(user.email))
-  }
-
-
-  "verify updating user" in {
-
-    val newUser = createNewUserObject
-    val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(newUser)))
-    val userSaveUrl  = s"$testPaymentGatewayURL/user/create"
-    Logger.info("verify save user obj: {} ", userJson);
-    val createResponse = await(WS.url(userSaveUrl).post(userJson))
-
-    val userDetails: models.User = mapper.readValue(createResponse.body.toString(), classOf[models.User])
-    userDetails.firstname = "James"
-    userDetails.lastname = "Brown"
-    val updateUserJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(userDetails)))
-    val userUpdateUrl  = s"$testPaymentGatewayURL/user/update"
-
-    Logger.info("verify save user obj: {} ", updateUserJson);
-    val updateResponse = await(WS.url(userUpdateUrl).post(updateUserJson))
-    Logger.info("verify save user response {} ", updateResponse)
-
-    updateResponse.status mustBe (CREATED)
-  }
+      updateResponse.status mustBe (CREATED)
+    }
 
   "verify authenticated user" in {
-    val password = "password122344";
     val user = createUserRemote(password);
 
     val userAuthJson = play.api.libs.json.Json.parse(Json.stringify(Json.newObject.put("email", user.email).put("password", password)))
@@ -91,8 +94,10 @@ class UserWebSpec extends PlaySpec with OneServerPerSuite {
     Logger.info(response.body.toString())
     response.status mustBe (OK)
   }
-  
+
   def createUserRemote(password : String) :  models.User = {
+    Logger.info("verify save user obj with password : {} ", password);
+
     val user = UserFixture.createUser(password)
     val userJson = play.api.libs.json.Json.parse(Json.stringify(Json.toJson(user)))
     val userSaveUrl  = s"$testPaymentGatewayURL/user/create"

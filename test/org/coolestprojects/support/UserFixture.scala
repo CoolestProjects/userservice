@@ -20,6 +20,7 @@ object UserFixture {
     user.lastname = "King"
     user.mobileNumber = "+353800000000"
     user.coderdojoId = 1
+    user.setPassword("password122344")
 
     return user
   }
