@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "platform-centos"
   config.vm.network :forwarded_port, guest: 3306, host: 3307 # MySQL
   config.vm.network :forwarded_port, guest: 9000, host: 10001  # Web app
+  config.vm.network :forwarded_port, guest: 22, host: 1322
 
   config.vm.provision :chef_solo do |chef|
 
