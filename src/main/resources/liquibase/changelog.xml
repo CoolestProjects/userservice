@@ -11,5 +11,6 @@
     <include file="changelogs/u3.sql" relativeToChangelogFile="true"/>
     <include file="changelogs/u4.sql" relativeToChangelogFile="true"/>
     <include file="changelogs/u5.sql" relativeToChangelogFile="true"/>
+    <include file="changelogs/u6.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dao.RoleDao;
 import dao.UserDao;
 import models.Role;
 import models.User;
@@ -20,10 +21,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by noelking on 10/17/14.
@@ -69,6 +67,7 @@ public class UserController extends Controller {
         user.active = true;
         return saveUser(user);
     }
+
     
     private static Result saveUser(final models.User user) {
         try {
@@ -100,6 +99,11 @@ public class UserController extends Controller {
 
     public static Promise<Result> get(final String email) {
         return Promise.promise(() -> getUserFromEmail(email))
+                .map((Result result) -> result);
+    }
+
+    public static Promise<Result> getAuthUser(final String email) {
+        return Promise.promise(() -> getAuthUserFromEmail(email))
                 .map((Result result) -> result);
     }
 
@@ -158,7 +162,7 @@ public class UserController extends Controller {
         final User user = UserDao.find.where().eq("email", email).findUnique();
         if(user != null) {
             final String password = userService.resetPassword();
-            user.setHashPassword(password);
+            user.setPassword(password);
             final EmailService emailService = new EmailService();
             emailService.sendLostPasswordEmail(new String[] {email}, user.firstname, password);
             return saveUser(user);
@@ -169,9 +173,30 @@ public class UserController extends Controller {
     
     private static Result getUserFromEmail(final String email) {
         final User user = getUser(email);
-        JsonNode userResponse = Json.toJson(user);
-        return ok(userResponse);
+        if(user != null) {
+            JsonNode userResponse = Json.toJson(user);
+            return ok(userResponse);
+        } return notFound("User with email address " + email + " not found");
     }
+
+    private static Result getAuthUserFromEmail(final String email) {
+        final User user = getUser(email);
+        if(user != null) {
+            setAuthorities(user);
+            JsonNode userResponse = Json.toJson(user);
+            return ok(userResponse);
+        } return notFound("User with email address " + email + " not found");
+    }
+
+    private static void setAuthorities(final User user) {
+        final Set<String> roles = new HashSet<String>();
+        List<Role> roleList = RoleDao.find.where().eq("user_id", user.id).findList();
+        for(Role role : roleList) {
+            roles.add(role.getName());
+        }
+        user.authorities = roles;
+    }
+
 
     private static Result getUserAll() {
         final List<User> user = UserDao.find.all();
@@ -227,7 +252,7 @@ public class UserController extends Controller {
         Logger.info("Json object received " + request().body().asJson() + " = " + mapper.toString());
         final User userDetails = new User();
         userDetails.email = request.get("email").asText();
-        userDetails.setHashPassword(request.get("password").asText());
+        userDetails.setPassword(request.get("password").asText());
         userDetails.firstname = request.get("firstname") != null ? request.get("firstname").asText() : "";
         userDetails.lastname = request.get("lastname") != null ? request.get("lastname").asText() : "";
         userDetails.acceptTerms = request.get("acceptTerms") != null ? request.get("acceptTerms").asText() : "";
@@ -241,6 +266,9 @@ public class UserController extends Controller {
         userDetails.parentName = request.get("parentName") != null ? request.get("parentName").asText() : "";
         userDetails.twitter = request.get("twitter") != null ? request.get("twitter").asText() : "";
         userDetails.mailingList = request.get("mailingList") != null ? request.get("mailingList").asText() : "";
+        userDetails.city = request.get("city") != null ? request.get("city").asText() : "";
+        userDetails.country = request.get("country") != null ? request.get("country").asText() : "";
+        userDetails.role = request.get("role") != null ? request.get("role").asText() : "";
         return userDetails;
     }
 

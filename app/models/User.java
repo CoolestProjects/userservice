@@ -11,12 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 
 /**
  * Created by noelking on 10/17/14.
  */
 @Entity
-public class User extends Model  implements java.io.Serializable {
+public class User extends Model implements java.io.Serializable {
 
     @Id
     public Long id;
@@ -34,11 +36,10 @@ public class User extends Model  implements java.io.Serializable {
     @Constraints.MinLength(2)
     public String lastname;
 
-    @Constraints.Required
     public Integer coderdojoId;
 
-    @Constraints.Required
-    @Formats.DateTime(pattern="dd/MM/yyyy")
+    public String coderdojoUUId;
+
     public Date dateOfBirth;
 
     @Constraints.MinLength(5)
@@ -56,9 +57,15 @@ public class User extends Model  implements java.io.Serializable {
 
     public boolean active;
 
+    public String city;
+    public String country;
+    public String role;
+
     public String gender;
-    
+
     public List<Role> roles;
+
+    public Set<String> authorities;
 
     public User() {}
 
@@ -80,17 +87,7 @@ public class User extends Model  implements java.io.Serializable {
     }
     
     public boolean doPasswordsMatch(final String enteredPassword) {
-        return BCrypt.checkpw(enteredPassword, password);
-    }
-    
-    public void setHashPassword(final String password) {
-        setPassword(hashPasswordValue(password));
-    }
-    
-    private String hashPasswordValue(final String newPassword) {
-        final String salt = BCrypt.gensalt(12);
-        final String passwordHashed = BCrypt.hashpw(newPassword, salt);
-        return passwordHashed;
+        return enteredPassword.equals(password);
     }
 
     public String getPassword() {

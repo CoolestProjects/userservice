@@ -11,11 +11,13 @@ GET     /user                       controllers.UserController.index()
 GET     /user/all                   controllers.UserController.getAll()
 GET     /user/byid/:id              controllers.UserController.getById(id: Integer)
 GET     /user/:email                controllers.UserController.get(email: String)
+GET     /user/auth/:email                controllers.UserController.getAuthUser(email: String)
 POST    /user/create                controllers.UserController.createUser()
 POST    /user/update                controllers.UserController.update()
 POST    /user/parentdetails/:userId    controllers.UserController.updateUserParentDetails(userId : Integer)
 POST    /user/updatepassword        controllers.UserController.updatePassword()
 POST    /user/authenticate          controllers.UserController.authenticate()
+
 
 POST    /user/lostpassword/:username           controllers.UserController.lostPassword(username: String)
 
