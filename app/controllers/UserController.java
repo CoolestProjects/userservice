@@ -156,7 +156,6 @@ public class UserController extends Controller {
         user.setPassword("");
         return ok(Json.toJson(user));
     }
-    
 
     private static Result processLostPassword(final String email) {
         final User user = UserDao.find.where().eq("email", email).findUnique();
