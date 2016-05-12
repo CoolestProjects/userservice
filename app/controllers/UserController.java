@@ -127,6 +127,26 @@ public class UserController extends Controller {
                 .map((Result result) -> result);
     }
 
+    public static Promise<Result> resetPassword() {
+        return Promise.promise(() -> resetUserPassword())
+                .map((Result result) -> result);
+    }
+
+    private static Result resetUserPassword() throws IOException, ParseException {
+        final Map<String, String> requestDetails = parsePasswordRequest();
+        final User user = UserDao.find.where().eq("email", requestDetails.get("email")).findUnique();
+        final String city = user.city != null ? user.city : "";
+        user.setPassword(user.id+"-CoderDojo"+user.city);
+        try {
+            Logger.info("Saving user data {} " + user);
+            user.save();
+            return returnUserRecord(user);
+        } catch (PersistenceException e){
+            Logger.info("Failed to save user data " + e.getMessage(), e);
+            return badRequest("Invalid user object");
+        }
+    }
+
     private static Result updateUserPassword() throws IOException, ParseException {
         final Map<String, String> requestDetails = parsePasswordRequest();
         final User user = UserDao.find.where().eq("email", requestDetails.get("email")).findUnique();

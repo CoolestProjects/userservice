@@ -16,8 +16,8 @@ POST    /user/create                controllers.UserController.createUser()
 POST    /user/update                controllers.UserController.update()
 POST    /user/parentdetails/:userId    controllers.UserController.updateUserParentDetails(userId : Integer)
 POST    /user/updatepassword        controllers.UserController.updatePassword()
+POST    /user/resetpassword         controllers.UserController.resetPassword()
 POST    /user/authenticate          controllers.UserController.authenticate()
-
 
 POST    /user/lostpassword/:username           controllers.UserController.lostPassword(username: String)
 
