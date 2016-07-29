@@ -11,8 +11,8 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "./target", "/vagrant_dist"
   config.vm.synced_folder "./target", "/vagrant_build"
 
-  config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.4_chef-11.4.4.box"
-  config.vm.box = "platform-centos"
+  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+  config.vm.box = "platform2-centos"
   config.vm.network :forwarded_port, guest: 3306, host: 3307 # MySQL
   config.vm.network :forwarded_port, guest: 9000, host: 10001  # Web app
   config.vm.network :forwarded_port, guest: 22, host: 1322
